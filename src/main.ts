@@ -1,6 +1,6 @@
 import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import path from "path";
-import { readdir } from "node:fs/promises";
+import { writeFile, readFile } from "node:fs/promises";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -37,24 +37,46 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", createWindow);
 
-ipcMain.handle("open-directory-dialog", async () => {
+function saveFile(content: any) {
+  dialog
+    .showSaveDialog({
+      title: "파일 저장",
+      defaultPath: path.join(app.getPath("downloads"), "data.tfm"),
+    })
+    .then((result) => {
+      if (!result.canceled) {
+        writeFile(result.filePath, content);
+        return result.filePath;
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+}
+
+ipcMain.handle("open-file-dialog", async () => {
   const result = await dialog.showOpenDialog(mainWindow, {
-    properties: ["openDirectory"],
+    properties: ["openFile"],
   });
 
   if (result.canceled) {
     return { canceled: true };
   }
 
-  const directoryPath = result.filePaths[0];
+  const filePath = result.filePaths[0];
 
-  const files = await readdir(directoryPath);
+  const files = await readFile(filePath);
 
   return {
     canceled: false,
-    directoryPath,
+    filePath: filePath,
     files,
   };
+});
+
+ipcMain.handle("save-file", async (_, data) => {
+  const filePath = saveFile(data);
+  return { success: true, path: filePath };
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

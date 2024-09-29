@@ -1,10 +1,14 @@
 declare global {
   interface Window {
     electronAPI: {
-      openDirectory: () => Promise<{
+      openFile: () => Promise<{
         canceled: boolean;
-        directoryPath?: string;
+        filePath?: string;
         files?: string[];
+      }>;
+      saveFile: (data) => Promise<{
+        success: boolean;
+        path: string;
       }>;
     };
   }
