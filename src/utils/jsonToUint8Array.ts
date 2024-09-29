@@ -1,4 +1,6 @@
-export default function jsonToUint8Array(jsonData: JSON): Uint8Array {
+import { JSONValue } from "../renderer/types/JSONValue";
+
+export default function jsonToUint8Array(jsonData: JSONValue): Uint8Array {
   // JSON 객체를 문자열로 변환
   const jsonString: string = JSON.stringify(jsonData);
 
