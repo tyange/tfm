@@ -1,7 +1,5 @@
 import { useState } from "react";
 
-import { encode } from "@msgpack/msgpack";
-
 export default function App(): React.ReactNode {
   const [files, setFiles] = useState<string[]>([]);
   const [filePath, setFilePath] = useState<string>("");
