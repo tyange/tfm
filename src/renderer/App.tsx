@@ -1,17 +1,11 @@
 import { useState } from "react";
 
+import jsonToUint8Array from "../utils/jsonToUint8Array";
+
 export default function App(): React.ReactNode {
   const [files, setFiles] = useState<string[]>([]);
   const [filePath, setFilePath] = useState<string>("");
 
-  function jsonToUint8Array(jsonData: any): Uint8Array {
-    // JSON 객체를 문자열로 변환
-    const jsonString: string = JSON.stringify(jsonData);
-
-    // 문자열을 UTF-8로 인코딩된 Uint8Array로 변환
-    const encoder = new TextEncoder();
-    return encoder.encode(jsonString);
-  }
   async function handleReadingFileList() {
     const result = await window.electronAPI.openFile();
     if (!result.canceled && result.files && result.filePath) {
@@ -23,9 +17,7 @@ export default function App(): React.ReactNode {
     }
   }
 
-  async function handleSaveFile(data: unknown) {
-    console.log("hi");
-
+  async function handleSaveFile() {
     const arrayBuffer = jsonToUint8Array({ message: "hi" });
 
     try {
