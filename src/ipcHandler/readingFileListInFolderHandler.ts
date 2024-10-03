@@ -2,7 +2,7 @@ import { BrowserWindow, dialog } from "electron";
 import { Dirent } from "node:fs";
 import { readdir } from "node:fs/promises";
 
-async function readDirectoryRecursively(directory: string) {
+async function readDirectoryRecursively(directory: string): Promise<Dirent[]> {
   const fileList: Dirent[] = [];
 
   // 현재 디렉토리의 내용을 읽습니다.
@@ -23,7 +23,7 @@ async function readDirectoryRecursively(directory: string) {
 
 export default async function readingFileListInFolderHandler(
   mainWindow: BrowserWindow
-) {
+): Promise<Dirent[]> {
   try {
     const result = await dialog.showOpenDialog(mainWindow, {
       properties: ["openDirectory"],
@@ -33,7 +33,7 @@ export default async function readingFileListInFolderHandler(
 
     const files = await readDirectoryRecursively(directoryPath);
 
-    console.log(files);
+    return files;
   } catch (err) {
     console.log(err);
   }
