@@ -5,7 +5,6 @@ import jsonToUint8Array from "../utils/jsonToUint8Array";
 
 export default function App(): React.ReactNode {
   const [files, setFiles] = useState<Dirent[]>([]);
-  const [filePath, setFilePath] = useState<string>("");
 
   async function handleFileListInFolder() {
     const fileList = await window.electronAPI.readingFileListInFolder();
@@ -39,12 +38,6 @@ export default function App(): React.ReactNode {
       <div>this is React App</div>
       <div>
         <button onClick={handleReadingFile}>open tfm</button>
-        <p>{filePath}</p>
-        <ul>
-          {files.map((f) => (
-            <li>{f.name}</li>
-          ))}
-        </ul>
       </div>
       <div>
         <button onClick={handleSaveFile}>save file</button>
@@ -52,6 +45,11 @@ export default function App(): React.ReactNode {
       <div>
         <button onClick={handleFileListInFolder}>reading folder</button>
       </div>
+      <ul>
+        {files.map((f) => (
+          <li>{f.name}</li>
+        ))}
+      </ul>
     </>
   );
 }
