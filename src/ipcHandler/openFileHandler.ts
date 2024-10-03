@@ -1,7 +1,7 @@
 import { BrowserWindow, dialog } from "electron";
 import { readFile } from "node:fs/promises";
 
-export default async function openFileDialogHandler(mainWindow: BrowserWindow) {
+export default async function openFileHandler(mainWindow: BrowserWindow) {
   try {
     const result = await dialog.showOpenDialog(mainWindow, {
       properties: ["openFile"],

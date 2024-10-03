@@ -6,7 +6,11 @@ export default function App(): React.ReactNode {
   const [files, setFiles] = useState<string[]>([]);
   const [filePath, setFilePath] = useState<string>("");
 
-  async function handleReadingFileList() {
+  async function handleFileListInFolder() {
+    await window.electronAPI.readingFileListInFolder();
+  }
+
+  async function handleReadingFile() {
     const result = await window.electronAPI.openFile();
     if (!result.canceled && result.files && result.filePath) {
       const byteArray = Object.values(result.files).map((v) => Number(v));
@@ -32,7 +36,7 @@ export default function App(): React.ReactNode {
     <>
       <div>this is React App</div>
       <div>
-        <button onClick={handleReadingFileList}>open tfm</button>
+        <button onClick={handleReadingFile}>open tfm</button>
         <p>{filePath}</p>
         <ul>
           {files.map((f) => (
@@ -42,6 +46,9 @@ export default function App(): React.ReactNode {
       </div>
       <div>
         <button onClick={handleSaveFile}>save file</button>
+      </div>
+      <div>
+        <button onClick={handleFileListInFolder}>reading folder</button>
       </div>
     </>
   );

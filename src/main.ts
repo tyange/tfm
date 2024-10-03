@@ -1,8 +1,9 @@
 import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 
-import openFileDialogHandler from "./ipcHandler/openFileDialogHandler";
+import openFileHandler from "./ipcHandler/openFileHandler";
 import saveFileHandler from "./ipcHandler/saveFileHandler";
+import readingFileListInFolderHandler from "./ipcHandler/readingFileListInFolderHandler";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
@@ -40,8 +41,11 @@ const createWindow = () => {
 app.on("ready", createWindow);
 
 // ipc handlers
-ipcMain.handle("open-file-dialog", () => openFileDialogHandler(mainWindow));
+ipcMain.handle("open-file", () => openFileHandler(mainWindow));
 ipcMain.handle("save-file", (_, data) => saveFileHandler(data));
+ipcMain.handle("reading-file-list-in-folder", () =>
+  readingFileListInFolderHandler(mainWindow)
+);
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits

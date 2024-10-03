@@ -10,6 +10,7 @@ declare global {
         success: boolean;
         path: string;
       }>;
+      readingFileListInFolder: () => Promise<void>;
     };
   }
 }
