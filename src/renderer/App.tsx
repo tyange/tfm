@@ -1,14 +1,30 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dirent } from "fs";
 
 import jsonToUint8Array from "../utils/jsonToUint8Array";
+import useDraggableItems from "../renderer/hooks/useDraggableItems";
+
+type FileWithId = {
+  id: string;
+  dirent: Dirent;
+};
 
 export default function App(): React.ReactNode {
-  const [files, setFiles] = useState<Dirent[]>([]);
+  const [files, setFiles] = useState<FileWithId[]>([]);
+
+  const {
+    isDragging,
+    currentDraggingNode,
+    dragStart,
+    dragEnter,
+    dragOver,
+    dragEnd,
+    draggableItems,
+  } = useDraggableItems({ items: files });
 
   async function handleFileListInFolder() {
     const fileList = await window.electronAPI.readingFileListInFolder();
-    setFiles(fileList);
+    setFiles(fileList.map((file) => ({ id: file.name, dirent: file })));
   }
 
   async function handleReadingFile() {
@@ -46,8 +62,18 @@ export default function App(): React.ReactNode {
         <button onClick={handleFileListInFolder}>reading folder</button>
       </div>
       <ul className="flex flex-col gap-3">
-        {files.map((f) => (
-          <li className="border border-zinc-600">{f.name}</li>
+        {draggableItems.map((item) => (
+          <li
+            key={item.id}
+            id={item.id}
+            draggable
+            onDragStart={dragStart}
+            onDragEnter={dragEnter}
+            onDragOver={dragOver}
+            onDragEnd={dragEnd}
+          >
+            {item.dirent.name}
+          </li>
         ))}
       </ul>
     </>
