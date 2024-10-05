@@ -45,9 +45,9 @@ export default function App(): React.ReactNode {
       <div>
         <button onClick={handleFileListInFolder}>reading folder</button>
       </div>
-      <ul>
+      <ul className="flex flex-col gap-3">
         {files.map((f) => (
-          <li>{f.name}</li>
+          <li className="border border-zinc-600">{f.name}</li>
         ))}
       </ul>
     </>
