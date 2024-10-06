@@ -32,14 +32,14 @@ export default function App(): React.ReactNode {
     if (!result.canceled && result.files && result.filePath) {
       const byteArray = Object.values(result.files).map((v) => Number(v));
       const str = String.fromCharCode(...byteArray);
+      const jsonData = JSON.parse(str);
 
-      console.log(JSON.parse(str));
-      console.log(result.filePath);
+      setFiles(jsonData.data);
     }
   }
 
   async function handleSaveFile() {
-    const arrayBuffer = jsonToUint8Array({ message: "hi" });
+    const arrayBuffer = jsonToUint8Array({ data: draggableItems });
 
     try {
       const result = await window.electronAPI.saveFile(arrayBuffer);
@@ -53,17 +53,24 @@ export default function App(): React.ReactNode {
     <>
       <div>this is React App</div>
       <div>
-        <button onClick={handleReadingFile}>open tfm</button>
+        <button className="btn" onClick={handleReadingFile}>
+          open tfm
+        </button>
       </div>
       <div>
-        <button onClick={handleSaveFile}>save file</button>
+        <button className="btn" onClick={handleSaveFile}>
+          save file
+        </button>
       </div>
       <div>
-        <button onClick={handleFileListInFolder}>reading folder</button>
+        <button className="btn" onClick={handleFileListInFolder}>
+          reading folder
+        </button>
       </div>
       <ul className="flex flex-col gap-3">
         {draggableItems.map((item) => (
           <li
+            className="border border-zinc-300"
             key={item.id}
             id={item.id}
             draggable

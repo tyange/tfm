@@ -2571,6 +2571,11 @@ fsevents@~2.3.2, fsevents@~2.3.3:
   resolved "https://registry.yarnpkg.com/fsevents/-/fsevents-2.3.3.tgz#cac6407785d03675a2a5e1a5305c697b347d90d6"
   integrity sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==
 
+fswin@^3.24.829:
+  version "3.24.829"
+  resolved "https://registry.yarnpkg.com/fswin/-/fswin-3.24.829.tgz#ea8c7ab291dac6853b152f29323d3ab97ce6d2a6"
+  integrity sha512-t3KHDNSMHbUzjpzb35c+27dGMLcE5gXvYZ4to5BITvCvPr3dZvX41VUzgEMQ8mVozbn5uiQ9p61/cQVLDEy+ag==
+
 function-bind@^1.1.2:
   version "1.1.2"
   resolved "https://registry.yarnpkg.com/function-bind/-/function-bind-1.1.2.tgz#2c02d864d97f3ea6c8830c464cbd11ab6eab7a1c"
