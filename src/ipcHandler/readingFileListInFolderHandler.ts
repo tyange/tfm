@@ -1,6 +1,7 @@
 import { BrowserWindow, dialog } from "electron";
 import { Dirent } from "node:fs";
-import { readdir } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
+import path from "path";
 
 async function readDirectoryRecursively(directory: string): Promise<Dirent[]> {
   const fileList: Dirent[] = [];
@@ -23,7 +24,7 @@ async function readDirectoryRecursively(directory: string): Promise<Dirent[]> {
 
 export default async function readingFileListInFolderHandler(
   mainWindow: BrowserWindow
-): Promise<Dirent[]> {
+): Promise<{ id: string; dirent: Dirent }[]> {
   try {
     const result = await dialog.showOpenDialog(mainWindow, {
       properties: ["openDirectory"],
@@ -33,7 +34,22 @@ export default async function readingFileListInFolderHandler(
 
     const files = await readDirectoryRecursively(directoryPath);
 
-    return files;
+    const TFMFile = files.find((file) => {
+      const splitFileName = file.name.split(".");
+
+      return splitFileName[splitFileName.length - 1] === "tfm";
+    });
+
+    if (TFMFile) {
+      const file = await readFile(path.join(TFMFile.parentPath, TFMFile.name));
+      const byteArray = Object.values(file).map((v) => Number(v));
+      const str = String.fromCharCode(...byteArray);
+      const jsonData = JSON.parse(str);
+
+      return jsonData.data;
+    }
+
+    return files.map((file) => ({ id: file.name, dirent: file }));
   } catch (err) {
     console.log(err);
   }

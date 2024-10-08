@@ -23,19 +23,8 @@ export default function App(): React.ReactNode {
   } = useDraggableItems({ items: files });
 
   async function handleFileListInFolder() {
-    const fileList = await window.electronAPI.readingFileListInFolder();
-    setFiles(fileList.map((file) => ({ id: file.name, dirent: file })));
-  }
-
-  async function handleReadingFile() {
-    const result = await window.electronAPI.openFile();
-    if (!result.canceled && result.files && result.filePath) {
-      const byteArray = Object.values(result.files).map((v) => Number(v));
-      const str = String.fromCharCode(...byteArray);
-      const jsonData = JSON.parse(str);
-
-      setFiles(jsonData.data);
-    }
+    const result = await window.electronAPI.readingFileListInFolder();
+    setFiles(result);
   }
 
   async function handleSaveFile() {
@@ -52,11 +41,6 @@ export default function App(): React.ReactNode {
   return (
     <>
       <div>this is React App</div>
-      <div>
-        <button className="btn" onClick={handleReadingFile}>
-          open tfm
-        </button>
-      </div>
       <div>
         <button className="btn" onClick={handleSaveFile}>
           save file
