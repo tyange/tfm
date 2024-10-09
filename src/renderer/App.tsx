@@ -11,6 +11,9 @@ type FileWithId = {
 };
 
 export default function App(): React.ReactNode {
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [files, setFiles] = useState<FileWithId[]>([]);
 
   const {
@@ -23,31 +26,90 @@ export default function App(): React.ReactNode {
     draggableItems,
   } = useDraggableItems({ items: files });
 
-  async function handleFileListInFolder() {
+  async function handleFileListInFolder(): Promise<void> {
+    setIsLoading(true);
+
     try {
       const result = await window.electronAPI.readingFileListInFolder();
+
+      console.log(result);
+
       setFiles(result);
+      setIsSuccess(true);
     } catch (err) {
       console.error(err);
+      setIsError(true);
     }
+    setIsLoading(false);
   }
 
-  async function handleSaveFile() {
+  async function handleSaveFile(): Promise<void> {
+    setIsLoading(true);
+
     const arrayBuffer = jsonToUint8Array({ data: draggableItems });
 
     try {
-      const result = await window.electronAPI.saveFile(arrayBuffer);
-      console.log("File saved successfully at:", result.path);
+      await window.electronAPI.saveFile(arrayBuffer);
+      setIsSuccess(true);
     } catch (error) {
       console.error("Failed to save file:", error);
+      setIsError(true);
     }
+
+    setIsLoading(false);
   }
 
-  async function handleOpenFile(dirent: Dirent) {
+  async function handleOpenFile(dirent: Dirent): Promise<void> {
+    setIsLoading(true);
+
     try {
       await window.electronAPI.openFile(dirent);
+      setIsSuccess(true);
     } catch (err) {
       console.error(err);
+      setIsError(true);
+    }
+    setIsLoading(false);
+  }
+
+  function renderer(): React.ReactNode {
+    let status: "isLoading" | "isError" | "isEmpty" | "isSuccess" = "isEmpty";
+
+    if (isLoading) {
+      status = "isLoading";
+    } else if (isError) {
+      status = "isError";
+    } else if (isSuccess && files.length > 0) {
+      status = "isSuccess";
+    }
+
+    switch (status) {
+      case "isLoading":
+        return <p>Loading...</p>;
+      case "isError":
+        return <p>Error Occurred!</p>;
+      case "isSuccess":
+        return (
+          <ul className="flex flex-col gap-3">
+            {draggableItems.map((item) => (
+              <li
+                className="border border-zinc-300"
+                key={item.id}
+                id={item.id}
+                draggable
+                onDragStart={dragStart}
+                onDragEnter={dragEnter}
+                onDragOver={dragOver}
+                onDragEnd={dragEnd}
+                onDoubleClick={() => handleOpenFile(item.dirent)}
+              >
+                {item.dirent.name}
+              </li>
+            ))}
+          </ul>
+        );
+      default:
+        return <p>No data.</p>;
     }
   }
 
@@ -64,23 +126,7 @@ export default function App(): React.ReactNode {
           reading folder
         </button>
       </div>
-      <ul className="flex flex-col gap-3">
-        {draggableItems.map((item) => (
-          <li
-            className="border border-zinc-300"
-            key={item.id}
-            id={item.id}
-            draggable
-            onDragStart={dragStart}
-            onDragEnter={dragEnter}
-            onDragOver={dragOver}
-            onDragEnd={dragEnd}
-            onDoubleClick={() => handleOpenFile(item.dirent)}
-          >
-            {item.dirent.name}
-          </li>
-        ))}
-      </ul>
+      <div>{renderer()}</div>
     </>
   );
 }
