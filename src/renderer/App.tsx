@@ -31,9 +31,6 @@ export default function App(): React.ReactNode {
 
     try {
       const result = await window.electronAPI.readingFileListInFolder();
-
-      console.log(result);
-
       setFiles(result);
       setIsSuccess(true);
     } catch (err) {
