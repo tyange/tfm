@@ -1,6 +1,6 @@
 import { BrowserWindow, dialog } from "electron";
 import { Dirent } from "node:fs";
-import { stat, readdir, readFile } from "node:fs/promises";
+import { stat, readdir, readFile, opendir } from "node:fs/promises";
 import { exec } from "child_process";
 import util from "util";
 import path from "path";
@@ -27,36 +27,38 @@ export default async function readingFileListInFolderHandler(
     }
 
     console.log(directoryPath);
-
     const stats = await stat(directoryPath);
     console.log(`경로가 존재합니다. 디렉토리입니까? ${stats.isDirectory()}`);
+    // const files = await readdir(directoryPath, {
+    //   withFileTypes: true,
+    //   recursive: true,
+    // });
 
-    const files = await readdir(directoryPath, {
-      withFileTypes: true,
-      recursive: true,
-    });
+    const dir = await opendir(directoryPath, { recursive: true });
+    console.log(dir);
+    // const files = await dir.read();
+    // if (files.length === 0) {
+    //   console.log("USB 드라이브가 비어 있습니다.");
+    //   console.log("현재 사용자:", os.userInfo().username);
+    // }
 
-    if (files.length === 0) {
-      console.log("USB 드라이브가 비어 있습니다.");
-      console.log("현재 사용자:", os.userInfo().username);
-    }
+    // const TFMFile = files.find((file) => {
+    //   const splitFileName = file.name.split(".");
 
-    const TFMFile = files.find((file) => {
-      const splitFileName = file.name.split(".");
+    //   return splitFileName[splitFileName.length - 1] === "tfm";
+    // });
 
-      return splitFileName[splitFileName.length - 1] === "tfm";
-    });
+    // if (TFMFile) {
+    //   const file = await readFile(path.join(TFMFile.parentPath, TFMFile.name));
+    //   const byteArray = Object.values(file).map((v) => Number(v));
+    //   const str = String.fromCharCode(...byteArray);
+    //   const jsonData = JSON.parse(str);
 
-    if (TFMFile) {
-      const file = await readFile(path.join(TFMFile.parentPath, TFMFile.name));
-      const byteArray = Object.values(file).map((v) => Number(v));
-      const str = String.fromCharCode(...byteArray);
-      const jsonData = JSON.parse(str);
+    //   return jsonData.data;
+    // }
 
-      return jsonData.data;
-    }
-
-    return files.map((file) => ({ id: crypto.randomUUID(), dirent: file }));
+    // return files.map((file) => ({ id: crypto.randomUUID(), dirent: file }));
+    return [];
   } catch (err) {
     console.log(err);
   }
