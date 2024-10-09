@@ -1,3 +1,4 @@
+import Squirrel from "electron-squirrel-startup";
 import { app, BrowserWindow, ipcMain } from "electron";
 import path from "path";
 
@@ -6,7 +7,7 @@ import saveFileHandler from "./ipcHandler/saveFileHandler";
 import readingFileListInFolderHandler from "./ipcHandler/readingFileListInFolderHandler";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require("electron-squirrel-startup")) {
+if (Squirrel) {
   app.quit();
 }
 
