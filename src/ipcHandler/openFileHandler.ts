@@ -1,26 +1,8 @@
-import { BrowserWindow, dialog } from "electron";
-import { readFile } from "node:fs/promises";
+import { shell } from "electron";
+import { Dirent } from "fs";
+import path from "path";
 
-export default async function openFileHandler(mainWindow: BrowserWindow) {
-  try {
-    const result = await dialog.showOpenDialog(mainWindow, {
-      properties: ["openFile"],
-    });
-
-    if (result.canceled) {
-      return { canceled: true };
-    }
-
-    const filePath = result.filePaths[0];
-
-    const files = await readFile(filePath);
-
-    return {
-      canceled: false,
-      filePath: filePath,
-      files,
-    };
-  } catch (err) {
-    console.error(err);
-  }
+export default async function openFileHandler(dirent: Dirent) {
+  const fullPath = path.join(dirent.parentPath, dirent.name);
+  await shell.openPath(fullPath);
 }

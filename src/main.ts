@@ -41,7 +41,7 @@ const createWindow = () => {
 app.on("ready", createWindow);
 
 // ipc handlers
-ipcMain.handle("open-file", () => openFileHandler(mainWindow));
+ipcMain.handle("open-file", (_, dirent) => openFileHandler(dirent));
 ipcMain.handle("save-file", (_, data) => saveFileHandler(data));
 ipcMain.handle("reading-file-list-in-folder", () =>
   readingFileListInFolderHandler(mainWindow)

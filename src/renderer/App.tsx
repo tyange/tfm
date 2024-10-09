@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
 import { Dirent } from "fs";
 
 import jsonToUint8Array from "../utils/jsonToUint8Array";
@@ -23,8 +24,12 @@ export default function App(): React.ReactNode {
   } = useDraggableItems({ items: files });
 
   async function handleFileListInFolder() {
-    const result = await window.electronAPI.readingFileListInFolder();
-    setFiles(result);
+    try {
+      const result = await window.electronAPI.readingFileListInFolder();
+      setFiles(result);
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   async function handleSaveFile() {
@@ -35,6 +40,14 @@ export default function App(): React.ReactNode {
       console.log("File saved successfully at:", result.path);
     } catch (error) {
       console.error("Failed to save file:", error);
+    }
+  }
+
+  async function handleOpenFile(dirent: Dirent) {
+    try {
+      await window.electronAPI.openFile(dirent);
+    } catch (err) {
+      console.error(err);
     }
   }
 
@@ -62,6 +75,7 @@ export default function App(): React.ReactNode {
             onDragEnter={dragEnter}
             onDragOver={dragOver}
             onDragEnd={dragEnd}
+            onDoubleClick={() => handleOpenFile(item.dirent)}
           >
             {item.dirent.name}
           </li>
